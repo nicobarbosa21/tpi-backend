@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PruebaDTO {
     private int id;
-    private LocalDateTime fechaFin;
+    private LocalDateTime fechaFin; // Fecha finalización de la prueba
     private InteresadoDTO interesado;
     private VehiculoDTO vehiculo;
 

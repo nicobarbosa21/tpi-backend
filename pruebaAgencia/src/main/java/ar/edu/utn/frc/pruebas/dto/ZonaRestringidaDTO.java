@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ZonaRestringidaDTO {
-    private CoordenadaDTO noroeste;
-    private CoordenadaDTO sureste;
+    private CoordenadaDTO noroeste; // Delimita el extremo superior izquierdo de la zona.
+    private CoordenadaDTO sureste; // Delimita el extremo inferior derecho de la zona.
 }

@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class AgenciaDTO {
     private CoordenadaDTO coordenadasAgencia;
-    private int radioAdmintido;
-    private List<ZonaRestringidaDTO> zonasRestringidas;
+    private int radioAdmintido; // Radio de alcance permitido
+    private List<ZonaRestringidaDTO> zonasRestringidas; // Lista de las zonas restringidas
 }

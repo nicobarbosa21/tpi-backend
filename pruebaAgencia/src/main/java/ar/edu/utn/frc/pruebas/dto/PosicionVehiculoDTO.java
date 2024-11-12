@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class PosicionVehiculoDTO {
     private int vehiculoId;
-    private int latitud;
-    private int longitud;
+    private double latitud;
+    private double longitud;
 }
