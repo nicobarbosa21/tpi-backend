@@ -1,6 +1,6 @@
 package ar.edu.utn.frc.pruebas.servicies;
 
-import ar.edu.utn.frc.pruebas.client.ApiClient;
+import ar.edu.utn.frc.pruebas.servicioExterno.ApiExterna;
 import ar.edu.utn.frc.pruebas.dto.AgenciaDTO;
 import ar.edu.utn.frc.pruebas.dto.NotificacionAlertaDTO;
 import ar.edu.utn.frc.pruebas.models.*;
@@ -200,7 +200,7 @@ public class PruebaServiceImpl extends ServiceImpl<Prueba, Integer> implements P
     }
 
     private AgenciaDTO obtenerInformacionAgencia(){
-        ApiClient apiClient = new ApiClient();
-        return apiClient.getAgenciaInfo();
+        ApiExterna apiExterna = new ApiExterna();
+        return apiExterna.getAgenciaInfo();
     }
 }
