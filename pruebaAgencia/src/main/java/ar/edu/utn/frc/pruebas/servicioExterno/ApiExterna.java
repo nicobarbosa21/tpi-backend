@@ -33,17 +33,30 @@ public class ApiExterna {
             JSONArray zonasRestringidas = jsonRespuesta.getJSONArray("zonasRestringidas");
             List<ZonaRestringidaDTO> zonas = new ArrayList<>();
 
-
-            for (int i = 0; i < zonasRestringidas.length(); i++) {
-                JSONObject zona = zonasRestringidas.getJSONObject(i);
+            //Se itera el array de zonas restringidas para obtener cada una de ellas por iteracion (si cumplen con ser noroeste y sureste) y se agregan a la lista de zonas
+            for (Object obj : zonasRestringidas) {
+                JSONObject zona = (JSONObject) obj;
                 JSONObject noroeste = zona.getJSONObject("noroeste");
                 JSONObject sureste = zona.getJSONObject("sureste");
 
+                // Se crea un objeto ZonaRestringidaDTO con las coordenadas noroeste y sureste de cada zona restringida
                 zonas.add(new ZonaRestringidaDTO(
                         new CoordenadaDTO(noroeste.getDouble("lat"), noroeste.getDouble("lon")),
                         new CoordenadaDTO(sureste.getDouble("lat"), sureste.getDouble("lon"))
                 ));
             }
+            /*si falla reemplazar con:
+            * for (int i = 0; i < zonasRestringidas.length(); i++) {
+            * JSONObject zona = zonasRestringidas.getJSONObject(i);
+            * JSONObject noroeste = zona.getJSONObject("noroeste");
+            * JSONObject sureste = zona.getJSONObject("sureste");
+            *
+            //Se crea un objeto ZonaRestringidaDTO con las coordenadas noroeste y sureste de cada zona restringida
+            zonas.add(new ZonaRestringidaDTO(
+                    new CoordenadaDTO(noroeste.getDouble("lat"), noroeste.getDouble("lon")),
+                    new CoordenadaDTO(sureste.getDouble("lat"), sureste.getDouble("lon"))
+            ));
+        }*/
 
             return new AgenciaDTO(new CoordenadaDTO(lat, lon), radioAdmitido, zonas);
         } catch (Exception e) {
