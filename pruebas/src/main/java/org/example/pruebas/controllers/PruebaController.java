@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -26,65 +27,59 @@ public class PruebaController {
         this.empleadoRepository = empleadoRepository;
     }
 
-
-    // 1 Endopoint - Crear Prueba
+    // Endpoint para crear una nueva prueba
     @PostMapping("/create")
     public ResponseEntity<Prueba> createPrueba(@RequestBody PruebaDTO pruebaDTO) {
         try {
+            // Extraer datos necesarios desde el DTO
             String documento = pruebaDTO.getInteresadoDTO().getDocumento();
             String patente = pruebaDTO.getVehiculoDTO().getPatente();
             Integer legajoEmpleado = pruebaDTO.getEmpleadoDTO().getLegajo();
             String comentarios = pruebaDTO.getComentarios();
 
-            // Llamar al servicio para crear la nueva prueba
+            // Crear la nueva prueba a través del servicio
             Prueba nuevaPrueba = pruebaService.crearNuevaPrueba(documento, patente, legajoEmpleado, comentarios);
 
-            // Devolver la entidad Prueba creada
+            // Respuesta exitosa con la entidad creada
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrueba);
 
         } catch (Exception e) {
-            // Manejar errores y devolver una respuesta adecuada
+            // Manejo de excepciones en caso de error
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
-    // 2 Endpoint para listar todas las pruebas en un momento dado
+    // Endpoint para obtener la lista de todas las pruebas registradas
     @GetMapping("/list")
     public ResponseEntity<?> listarPruebas() {
         List<Prueba> pruebas = pruebaService.obtenerTodasLasPruebas();
-        if (pruebas == null) {
+        if (pruebas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body("No existe pruebas cargadas en el sistema.");
-        } else {
-            return ResponseEntity.ok(pruebas);
+                    .body("No existen pruebas cargadas en el sistema.");
         }
+        return ResponseEntity.ok(pruebas);
     }
 
-    // 3 Endopoint para finalizar una prueba permitiendo al empleado agregar un comentario
+    // Endpoint para finalizar una prueba y permitir agregar comentarios adicionales
     @PutMapping("/complete")
     public ResponseEntity<String> finalizarPrueba(@RequestBody PruebaDTO pruebaDTO) {
         try {
-            //Obtener una id y comentarios
+            // Obtener ID y comentario desde el DTO
             Integer id = pruebaDTO.getId();
             String comentario = pruebaDTO.getComentarios();
 
+            // Llamar al servicio para completar la prueba
             boolean resultado = pruebaService.finalizarPrueba(id, comentario);
             if (resultado) {
-                return ResponseEntity.ok("Prueba ha finalizado correctamente.");
+                return ResponseEntity.ok("La prueba se ha finalizado correctamente.");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La prueba no se encontro.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prueba no encontrada.");
             }
         } catch (Exception e) {
+            // Manejo de errores
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error al finalizar la prueba.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocurrió un error al finalizar la prueba.");
         }
     }
-
-
-
 }
-
-
-
-

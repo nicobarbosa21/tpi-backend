@@ -15,6 +15,5 @@ public class Configuracion {
     private double radioAdmitidoKm;
     private List<ZonaRestringida> zonasRestringidas;
 
-    // Getters y Setters
 }
 
