@@ -22,7 +22,7 @@ public class PosicionController {
     }
 
     // 4 - Endpoint para guardar una posicion
-    @PostMapping("/posicion")
+    @PostMapping("/position")
     public ResponseEntity<String> guardarPosicion(@RequestBody PosicionDTO posicionDTO) {
         try {
             // Llama al servicio para crear una nueva posición
@@ -31,10 +31,10 @@ public class PosicionController {
                     posicionDTO.getLongitud(),
                     posicionDTO.getLatitud()
             );
-            return ResponseEntity.ok("Posición guardada exitosamente");
+            return ResponseEntity.ok("La posicion se ha guardado correctamente");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar la posición.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error al guardar la posición.");
         }
     }
 }
