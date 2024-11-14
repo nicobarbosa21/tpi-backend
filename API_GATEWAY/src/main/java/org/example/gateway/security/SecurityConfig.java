@@ -1,4 +1,4 @@
-package org.example.api_gateway.security;
+package org.example.gateway.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,33 +20,31 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(exchanges -> exchanges
+    public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
+        http.authorizeExchange(exchanges -> exchanges
 
-                        // Tratamos de hacerlo con /internal pero no pudimos
                         .pathMatchers("/api/notificaciones/advertencia").permitAll()
 
-                        .pathMatchers("/api/pruebas/reporte*").hasRole("ADMIN") //BIEN
+                        //El administrador accede a los reportes
+                        .pathMatchers("/api/pruebas/reporte*").hasRole("ADMIN")
 
-                        .pathMatchers("/api/pruebas/listar").hasAnyRole("ADMIN", "EMPLEADO") //BIEN
-                        .pathMatchers("/api/pruebas/crear").hasAnyRole("ADMIN", "EMPLEADO") //BIEN
-                        .pathMatchers("/api/pruebas/finalizar").hasAnyRole("ADMIN", "EMPLEADO") //BIEN
+                        //Los endpoints de las pruebas son usadas por el empleado y el administrador
+                        .pathMatchers("/api/pruebas/crear").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/api/pruebas/listar").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/api/pruebas/finalizar").hasAnyRole("ADMIN", "EMPLEADO")
 
-                        .pathMatchers("/api/notificaciones/promocion").hasAnyRole("ADMIN", "EMPLEADO") //BIEN
+                        .pathMatchers("/api/notificaciones/promocion").hasAnyRole("ADMIN", "EMPLEADO")
 
+                        //Solamente el vehiculo puede realizar operaciones con la posicion
                         .pathMatchers("/api/pruebas/posicion").hasRole("VEHICULO")
 
-                        // .pathMatchers("/api/pruebas/**").permitAll() // para que no deniegue las peticiones del servicio pruebas
-
+                        //Autorizar para cualquier otro
                         .anyExchange().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults()))
-                .build();
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .csrf(ServerHttpSecurity.CsrfSpec::disable);
+        return http.build();
     }
 
     @Bean
@@ -70,5 +66,22 @@ public class SecurityConfig {
         });
         return converter;
     }
+
+    /*
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        var jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        var grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // Se especifica el nombre del claim a analizar
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access.roles");
+        // Se agrega este prefijo en la conversión por una convención de Spring
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        // Se asocia el conversor de Authorities al Bean que convierte el token JWT a un objeto Authorization
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
+
+     */
+
 
 }

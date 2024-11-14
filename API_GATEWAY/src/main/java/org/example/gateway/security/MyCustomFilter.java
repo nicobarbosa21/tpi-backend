@@ -1,4 +1,4 @@
-package org.example.api_gateway.security;
+package org.example.gateway.security;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,9 +14,8 @@ public class MyCustomFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getRequest().mutate().headers(httpHeaders -> {
-            httpHeaders.set(HttpHeaders.ORIGIN, ORIGIN_HEADER);
-        }).build();
+        exchange.getRequest().mutate().headers(httpHeaders -> httpHeaders
+                .set(HttpHeaders.ORIGIN, ORIGIN_HEADER)).build();
         return chain.filter(exchange);
     }
 }
