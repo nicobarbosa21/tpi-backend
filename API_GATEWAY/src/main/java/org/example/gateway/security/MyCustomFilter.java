@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class MyCustomFilter implements GlobalFilter {
 
-    private static final String ORIGIN_HEADER = "http://localhost:8082";
+    private static final String ORIGIN_HEADER = "http://localhost:8050";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
