@@ -31,10 +31,10 @@ public class PosicionController {
                     posicionDTO.getLongitud(),
                     posicionDTO.getLatitud()
             );
-            return ResponseEntity.ok("La posicion se ha guardado correctamente");
+            return ResponseEntity.ok("Se guardó la posición");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error al guardar la posición.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

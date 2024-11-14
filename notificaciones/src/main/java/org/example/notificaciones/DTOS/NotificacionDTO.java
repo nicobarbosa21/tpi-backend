@@ -2,15 +2,17 @@ package org.example.notificaciones.DTOS;
 
 
 public class NotificacionDTO {
-    private String mensaje;
+    private String msj;
 
+    // Constructor con un mensaje
     public NotificacionDTO(String mensaje) {
-        this.mensaje = mensaje;
+        this.msj = mensaje;
     }
 
-    public String getMensaje() {
-        return mensaje;
-    }
-
+    // Constructor vacio
     public NotificacionDTO(){}
+
+    public String getMsj() {
+        return msj;
+    }
 }

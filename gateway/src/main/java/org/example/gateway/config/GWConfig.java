@@ -14,10 +14,10 @@ public class GWConfig {
     @Bean
     public RouteLocator configurarRutas(RouteLocatorBuilder builder,
                                         @Value("http://localhost:8081/api/pruebas") String uriPruebas,
-                                        @Value("http://localhost:8080/api/notificaciones") String uriNotificaciones) {
+                                        @Value("http://localhost:8080/api/notis") String uriNotificaciones) {
         return builder.routes()
                 // Ruteo a notificaciones
-                .route(p -> p.path("/api/notificaciones/**").uri(uriNotificaciones))
+                .route(p -> p.path("/api/notis/**").uri(uriNotificaciones))
                 // Ruteo a pruebas
                 .route(p -> p.path("/api/pruebas/**").uri(uriPruebas))
                 .build();

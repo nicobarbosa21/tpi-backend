@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class NotificacionService {
 
-    private static final String CONFIG_URL = "http://localhost:8082/api/notificaciones/advertencia";
+    private static final String CONFIG_URL = "http://localhost:8050/api/notis/warning";
 
     public void enviarNotificacion(Notificacion notificacion) {
         try {

@@ -33,8 +33,6 @@ public class PruebaRepository {
         this.configuracionService = configuracionService;
     }
 
-
-
     public Boolean existePruebaActivaParaVehiculo(Integer idVehiculo) {
         try {
             return !em.createQuery("SELECT p FROM Prueba p WHERE p.vehiculo.id = :idVehiculo AND (p.fecha_hora_fin IS NULL)", Prueba.class)
@@ -69,7 +67,6 @@ public class PruebaRepository {
             return null;
         }
     }
-
 
     public Prueba findByID(Integer id) {
         Prueba prueba = em.find(Prueba.class, id);
@@ -106,10 +103,5 @@ public class PruebaRepository {
             return null;
        }
 
-}
-
-
-
-
-
+    }
 }

@@ -19,7 +19,7 @@ import java.io.IOException;
 public class CorsFilter implements Filter {
 
 
-    private static final String ALLOWED_ORIGIN = "http://localhost:8082";
+    private static final String ALLOWED_ORIGIN = "http://localhost:8050";
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

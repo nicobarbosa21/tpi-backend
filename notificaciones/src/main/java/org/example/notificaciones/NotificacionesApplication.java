@@ -1,8 +1,5 @@
 package org.example.notificaciones;
 
-import org.example.notificaciones.domain.Notificacion;
-
-import org.example.notificaciones.infraestructure.NotificationRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

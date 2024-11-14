@@ -24,20 +24,20 @@ public class SecurityConfig {
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http.authorizeExchange(exchanges -> exchanges
 
-                        .pathMatchers("/api/notificaciones/advertencia").permitAll()
+                        .pathMatchers("/api/notis/warning").permitAll()
 
                         //El administrador accede a los reportes
                         .pathMatchers("/api/pruebas/reporte*").hasRole("ADMIN")
 
                         //Los endpoints de las pruebas son usadas por el empleado y el administrador
-                        .pathMatchers("/api/pruebas/crear").hasAnyRole("ADMIN", "EMPLEADO")
-                        .pathMatchers("/api/pruebas/listar").hasAnyRole("ADMIN", "EMPLEADO")
-                        .pathMatchers("/api/pruebas/finalizar").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/api/pruebas/create").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/api/pruebas/list").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/api/pruebas/complete").hasAnyRole("ADMIN", "EMPLEADO")
 
-                        .pathMatchers("/api/notificaciones/promocion").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/api/notis/promotion").hasAnyRole("ADMIN", "EMPLEADO")
 
                         //Solamente el vehiculo puede realizar operaciones con la posicion
-                        .pathMatchers("/api/pruebas/posicion").hasRole("VEHICULO")
+                        .pathMatchers("/api/pruebas/position").hasRole("VEHICULO")
 
                         //Autorizar para cualquier otro
                         .anyExchange().authenticated()
