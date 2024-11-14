@@ -1,6 +1,6 @@
 package org.example.pruebas.services;
 
-import org.example.pruebas.config.Notificacion;
+import org.example.pruebas.servExt.Notificacion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

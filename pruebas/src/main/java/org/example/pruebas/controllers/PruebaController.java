@@ -46,7 +46,6 @@ public class PruebaController {
             // Manejar errores y devolver una respuesta adecuada
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
     // 2 Endpoint para listar todas las pruebas en un momento dado
@@ -71,18 +70,15 @@ public class PruebaController {
 
             boolean resultado = pruebaService.finalizarPrueba(id, comentario);
             if (resultado) {
-                return ResponseEntity.ok("Prueba ha finalizado correctamente.");
+                return ResponseEntity.ok("Prueba finalizó correctamente.");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La prueba no se encontro.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La prueba no fue encontrada");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error al finalizar la prueba.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocurrió un error al finalizar la prueba\n" + e.getMessage());
         }
     }
-
-
-
 }
 
 

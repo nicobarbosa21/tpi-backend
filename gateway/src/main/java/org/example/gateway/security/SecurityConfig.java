@@ -81,6 +81,9 @@ public class SecurityConfig {
     }
 
      */
-
-
 }
+
+//Implementar las medidas de seguridad que considere necesarias para que
+//únicamente un empleado pueda crear pruebas y mandar notificaciones, únicamente
+//un usuario asociado a un vehículo pueda enviar posiciones y solamente un
+//administrador pueda ver los datos de los reportes.

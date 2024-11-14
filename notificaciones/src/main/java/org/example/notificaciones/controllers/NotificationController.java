@@ -25,13 +25,14 @@ public class NotificationController {
     @PostMapping("/promotion")
     public ResponseEntity<String> saveNotification(@RequestBody NotificacionDTO notidto) {
         try {
-            String msj =  notidto.getMsj();
-            String type= "PROMOCION";
-            Notificacion noti = new Notificacion(msj,type);
+            String msj = notidto.getMensaje();
+            Notificacion noti = new Notificacion(msj,"PROMOCION");
+
+            // Guardar la notificacion en la BD
             notiRepository.save(noti);
-            return ResponseEntity.ok("La notificacion se ha guardado de forma correcta");
+            return ResponseEntity.ok("La notificacion guardó en la BD");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -39,9 +40,9 @@ public class NotificationController {
     public ResponseEntity<String> saveNotification(@RequestBody Notificacion noti) {
        try {
            notiRepository.save(noti);
-           return ResponseEntity.ok("La notificacion se ha guardado de forma correcta");
+           return ResponseEntity.ok("La notificacion se guardó en la BD");
        } catch (Exception e) {
-           throw new RuntimeException(e);
+           throw new RuntimeException(e.getMessage());
        }
     }
 

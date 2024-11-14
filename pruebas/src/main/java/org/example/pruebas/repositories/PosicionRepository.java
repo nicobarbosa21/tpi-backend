@@ -5,7 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
-import org.example.pruebas.config.Configuracion;
+import org.example.pruebas.servExt.Configuracion;
 import org.example.pruebas.models.Posicion;
 import org.example.pruebas.services.ConfiguracionService;
 import org.example.pruebas.services.PosicionService;
@@ -22,9 +22,9 @@ public class PosicionRepository {
     @PersistenceContext
     private EntityManager em;
     private PruebaRepository pruebaRepository;
+
     @Autowired
     private ConfiguracionService configuracionService;
-
 
     public PosicionRepository(EntityManager em, PruebaRepository pruebaRepository, ConfiguracionService configuracionService, PosicionService posicionService) {
         this.em = em;
@@ -33,37 +33,23 @@ public class PosicionRepository {
     }
 
     @Transactional
-    public Posicion savePosicion(Posicion posicion) {
+    public void savePosicion(Posicion posicion) {
         em.persist(posicion);
-        return posicion;
     }
 
-//    public double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
-//        // Fórmula de Haversine para calcular la distancia entre dos puntos geográficos
-//        final int EARTH_RADIUS_KM = 6371;
-//        double dLat = Math.toRadians(lat2 - lat1);
-//        double dLon = Math.toRadians(lon2 - lon1);
-//        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-//                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-//                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-//        return EARTH_RADIUS_KM * c;
-//    }
-
-    public double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
-        // Distancia euclídea en un plano
-        double dLat = lat2 - lat1;
-        double dLon = lon2 - lon1;
-        return Math.sqrt(dLat * dLat + dLon * dLon);
+    public double calcularDistancia(double latAct, double lonAct, double latNuev, double lonNuev) {
+        // Cálculo euclídeo de la distancia entre dos puntos geográficos
+        double distLat = latNuev - latAct;
+        double distLon = lonNuev - lonAct;
+        return Math.sqrt(distLat * distLat + distLon * distLon);
     }
-
 
     // Vehiculo y un tiempo determinado
-    public List<Posicion> obtenerPosiciones(Integer idVehiculo, Timestamp fechaInicio, Timestamp fechaFin) {
+    public List<Posicion> getPosiciones(Integer idVehiculo, Timestamp fechaInicio, Timestamp fechaFin) {
         try {
             // Consulta JPQL para obtener las posiciones del vehículo en el rango de fechas
-            String query = "SELECT p FROM Posicion p WHERE p.vehiculo.id = :idVehiculo " +
-                    "AND p.fechaHora BETWEEN :fechaInicio AND :fechaFin";
+            String query = "SELECT pru FROM Posicion pru WHERE pru.vehiculo.id = :idVehiculo " +
+                    "AND pru.fechaHora BETWEEN :fechaInicio AND :fechaFin";
 
             return em.createQuery(query, Posicion.class)
                     .setParameter("idVehiculo", idVehiculo)
@@ -76,38 +62,37 @@ public class PosicionRepository {
         }
     }
 
+    public Double cantKilometros(Integer idVehiculo, Timestamp fechaInicio, Timestamp fechaFin ) {
+        //obtiene una lista de posiciones de los vehiculos
+        List<Posicion> posiciones = getPosiciones(idVehiculo,fechaInicio,fechaFin);
 
+        Configuracion configuracion = configuracionService.getConfiguracion();
 
-    public Double cantidadKilometros(Integer idVehiculo, Timestamp fechaInicio, Timestamp fechaFin ) {
-        List<Posicion> posiciones = obtenerPosiciones(idVehiculo,fechaInicio,fechaFin);
-        System.out.println("POSCIONES" + posiciones);
-
-
-        // Coordenadas iniciales de la agencia
-        Configuracion configuracion = configuracionService.obtenerConfiguracion();
-        System.out.println(configuracion);
+        //inicializo las coordenadas actuales
         double latActual = configuracion.getCoordenadasAgencia().getLat();
         double lonActual = configuracion.getCoordenadasAgencia().getLon();
 
-        double distanciaTotal = 0.0;
+        //inicializo la distancia total
+        double distTotal = 0.0;
 
         for (Posicion posicion : posiciones) {
+
+            //obtiene las coordenadas de la nueva posicion, es decir, de cada iteracion de la lista
             double latNueva = posicion.getLatitud();
             double lonNueva = posicion.getLongitud();
 
             // Calcula la distancia entre la posición actual y la nueva
-            double distancia = calcularDistancia(latActual, lonActual, latNueva, lonActual);
-            System.out.println(distancia);
+            double distancia = calcularDistancia(latActual, lonActual, latNueva, lonNueva);
 
-            // Suma la distancia al total
-            distanciaTotal += distancia;
+            // suma la distancia calculada al acumulador de distancia total
+            distTotal += distancia;
 
-            // Actualiza las coordenadas actuales para la siguiente iteración
+            // actualiza las coordenadas actuales
             latActual = latNueva;
             lonActual = lonNueva;
         }
 
-        return distanciaTotal;
+        return distTotal;
     }
 
 

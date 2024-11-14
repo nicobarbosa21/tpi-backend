@@ -33,7 +33,7 @@ public class PruebaRepository {
         this.configuracionService = configuracionService;
     }
 
-    public Boolean existePruebaActivaParaVehiculo(Integer idVehiculo) {
+    public Boolean esPruebaActivaParaVehiculo(Integer idVehiculo) {
         try {
             return !em.createQuery("SELECT p FROM Prueba p WHERE p.vehiculo.id = :idVehiculo AND (p.fecha_hora_fin IS NULL)", Prueba.class)
                     .setParameter("idVehiculo", idVehiculo)
@@ -44,7 +44,7 @@ public class PruebaRepository {
         }
     }
 
-    public Boolean existePruebaActiva(Integer idPrueba) {
+    public Boolean esPruebaActiva(Integer idPrueba) {
         try {
             return !em.createQuery("SELECT p FROM Prueba p WHERE p.id = :idPrueba AND (p.fecha_hora_fin IS NULL)", Prueba.class)
                     .setParameter("idPrueba", idPrueba)
@@ -73,7 +73,7 @@ public class PruebaRepository {
         return prueba;
     }
 
-    public void finalizarPruebaEnCurso(Integer id, String comentario){
+    public void terminarPruebaActiva(Integer id, String comentario){
         Prueba prueba = findByID(id);
         Timestamp fechaActual = Timestamp.from(Instant.now());
         prueba.setFecha_hora_fin(fechaActual);
@@ -94,7 +94,7 @@ public class PruebaRepository {
         }
     }
 
-    public List<Prueba> obtenerPruebasIncidente(){
+    public List<Prueba> getPruebasConIncidente(){
         try {
             return em.createQuery("SELECT p FROM Prueba p WHERE p.inicidente = TRUE", Prueba.class)
                     .getResultList();

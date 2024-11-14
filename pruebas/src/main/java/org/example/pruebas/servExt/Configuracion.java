@@ -1,4 +1,4 @@
-package org.example.pruebas.config;
+package org.example.pruebas.servExt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +15,5 @@ public class Configuracion {
     private double radioAdmitidoKm;
     private List<ZonaRestringida> zonasRestringidas;
 
-    // Getters y Setters
 }
 

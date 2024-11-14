@@ -1,4 +1,4 @@
-package org.example.pruebas.config;
+package org.example.pruebas.servExt;
 
 
 import lombok.Data;
@@ -8,5 +8,4 @@ public class Coordenadas {
     private double lat;
     private double lon;
 
-    // Getters y Setters
 }
