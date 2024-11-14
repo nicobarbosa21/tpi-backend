@@ -28,7 +28,7 @@ public class PruebaController {
 
 
     // 1 Endopoint - Crear Prueba
-    @PostMapping("/crear")
+    @PostMapping("/create")
     public ResponseEntity<Prueba> createPrueba(@RequestBody PruebaDTO pruebaDTO) {
         try {
             String documento = pruebaDTO.getInteresadoDTO().getDocumento();
@@ -50,19 +50,19 @@ public class PruebaController {
     }
 
     // 2 Endpoint para listar todas las pruebas en un momento dado
-    @GetMapping("/listar")
+    @GetMapping("/list")
     public ResponseEntity<?> listarPruebas() {
         List<Prueba> pruebas = pruebaService.obtenerTodasLasPruebas();
         if (pruebas == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body("No hay pruebas cargadas en el sistema.");
+                    .body("No existe pruebas cargadas en el sistema.");
         } else {
             return ResponseEntity.ok(pruebas);
         }
     }
 
     // 3 Endopoint para finalizar una prueba permitiendo al empleado agregar un comentario
-    @PutMapping("/finalizar")
+    @PutMapping("/complete")
     public ResponseEntity<String> finalizarPrueba(@RequestBody PruebaDTO pruebaDTO) {
         try {
             //Obtener una id y comentarios
@@ -71,13 +71,13 @@ public class PruebaController {
 
             boolean resultado = pruebaService.finalizarPrueba(id, comentario);
             if (resultado) {
-                return ResponseEntity.ok("Prueba finalizada correctamente.");
+                return ResponseEntity.ok("Prueba ha finalizado correctamente.");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prueba no encontrada.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La prueba no se encontro.");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al finalizar la prueba.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error al finalizar la prueba.");
         }
     }
 
