@@ -2,7 +2,6 @@ package org.example.gateway.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -72,11 +71,11 @@ public class SecurityConfig {
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         var jwtAuthenticationConverter = new JwtAuthenticationConverter();
         var grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // Se especifica el nombre del claim a analizar
+        // Se especifica el nombre del claim para analizar
         grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access.roles");
         // Se agrega este prefijo en la conversión por una convención de Spring
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        // Se asocia el conversor de Authorities al Bean que convierte el token JWT a un objeto Authorization
+        // Se asocia el conversor de Authorities al Bean que convierte el token JWT hacia un objeto Authorization
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }

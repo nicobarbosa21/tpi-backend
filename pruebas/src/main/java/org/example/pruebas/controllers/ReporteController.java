@@ -21,22 +21,19 @@ public class ReporteController {
         this.posicionService = posicionService;
     }
 
-    // 6a - Reportes de incidentes
+    // PUNTO 6 A
     @GetMapping("/reportesIncidentes")
     public ResponseEntity<String> obtenerReportesIncidentes() {
         try {
-            // Llamada al servicio para obtener las pruebas como un String
             String reportes = pruebaService.obtenerPruebasConIncidentes();
-            // Retorna el reporte con un código HTTP 200
             return ResponseEntity.ok(reportes);
         } catch (Exception e) {
-            // Manejo de errores, retorna un mensaje con código 500
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al obtener los reportes de incidentes.");
+                    .body("ERROR AL OBTENER EL REPORTE");
         }
     }
 
-    //6b - Reportes de incidentes x empleado
+    // PUNTO 6 B
     @GetMapping("/reportesIncidentes/{legajoEmpleado}")
     public ResponseEntity<String> obtenerReporteIncidentesPorEmpleado(@PathVariable int legajoEmpleado) {
         String reporte = pruebaService.obtenerPruebasConIncidentesPorLegajo(legajoEmpleado);
@@ -45,7 +42,7 @@ public class ReporteController {
     }
 
 
-    // 6c - Reportes de kilometros
+    // PUNTO 6 C
     @PostMapping("/reporteKm")
     public ResponseEntity<String> obtenerKilometrosXVehiculo(@RequestBody VehiculoDTO vehiculoDTO) {
 

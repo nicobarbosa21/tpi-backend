@@ -28,4 +28,6 @@ public class GWConfig {
     public GlobalFilter MycustomFilter() {
         return new MyCustomFilter();
     }
+    // Implementar un filtro global que agregue el header "Origin" con el valor
+    // "http://localhost:8050" a todas las peticiones que pasen por el gateway.
 }

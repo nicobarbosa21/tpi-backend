@@ -31,7 +31,7 @@ public class PosicionController {
                     posicionDTO.getLongitud(),
                     posicionDTO.getLatitud()
             );
-            return ResponseEntity.ok("Se guardó la posición");
+            return ResponseEntity.ok("Posición guardada");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

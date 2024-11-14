@@ -19,3 +19,7 @@ public class MyCustomFilter implements GlobalFilter {
         return chain.filter(exchange);
     }
 }
+
+//mutate modifica el request, headers modifica los headers del request, set modifica el valor del header,
+// build construye el request con los headers modificados
+// chain.filter continua con el flujo de la peticion

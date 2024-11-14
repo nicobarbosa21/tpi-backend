@@ -64,7 +64,7 @@ public class PruebaService {
 
             // No guarda la prueba si la licencia está vencida o el cliente está restringido
             if (licenciaVencida || clienteRestringido) {
-                System.out.println("No se puede guardar la prueba debido a las restricciones.");
+                System.out.println("ERROR EN LAS RESTRICCIONES, NO SE PUEDE GUARDAR LA PRUEBA");
                 return null;
             }
 
