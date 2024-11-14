@@ -1,4 +1,4 @@
-package org.example.pruebas.config;
+package org.example.pruebas.servExt;
 
 
 import lombok.AllArgsConstructor;

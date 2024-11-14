@@ -10,7 +10,7 @@ import org.example.pruebas.repositories.PosicionRepository;
 import org.example.pruebas.repositories.PruebaRepository;
 import org.example.pruebas.repositories.VehiculoRepository;
 import org.springframework.stereotype.Service;
-import org.example.pruebas.config.*;
+import org.example.pruebas.servExt.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -33,7 +33,6 @@ public class PosicionService {
         this.notificacionService = notificacionService;
     }
 
-
     @Transactional
     public Posicion crearNuevaPosicion(Integer id_vehiculo, Double longitud, Double latitud) {
         try {
@@ -41,43 +40,40 @@ public class PosicionService {
 
             Timestamp fechaActual = Timestamp.from(Instant.now());
 
-            //BUSCAR LA PREUBA ASOCIADA AL VEHICULO
+            //Busca la prueba activa para el vehiculo
             Prueba prueba = pruebaRepository.pruebaByVehiculo(id_vehiculo);
-            Integer numEmpleado = prueba.getEmpleado().getTelefono();
-            Boolean pruebaActivaVehiculo = pruebaRepository.existePruebaActivaParaVehiculo(id_vehiculo);
+            int numEmpleado = prueba.getEmpleado().getTelefono();
+            Boolean pruebaActivaVehiculo = pruebaRepository.esPruebaActivaParaVehiculo(id_vehiculo);
             if (pruebaActivaVehiculo){
-                System.out.println("EL VEHICULO ESTA SIENDO PROBADO");
+                System.out.println("EL VEHICULO ESTÁ EN UNA PRUEBA");
             } else {
-                System.out.println("EL VEHICULO NO ESTA SIENDO PROBADO");
+                System.out.println("EL VEHICULO NO ESTA EN UNA PRUEBA");
                 return null;
             }
 
             Interesado interesado = prueba.getInteresado();
-            Configuracion configuracion = configuracionService.obtenerConfiguracion();
+            Configuracion configuracion = configuracionService.getConfiguracion();
 
             Posicion posicion = new Posicion(vehiculo, fechaActual, longitud, latitud);
-            System.out.println("SE CREO LA POSICION ANTES DE SER GUARDADO" + posicion);
             posicionRepository.savePosicion(posicion);
 
-
-            if (estaDentroDelRadioAdmitido(posicion, configuracion) && !estaEnZonaRestringida(posicion, configuracion.getZonasRestringidas())) {
-                System.out.println("ESTA DENTRO DE LO PERMITIDO");
+            if (estaDentroDelRadio(posicion, configuracion) && !estaEnZonaRestringida(posicion, configuracion.getZonasRestringidas())) {
+                System.out.println("ESTA DENTRO DE LAS CONDICIONES PERMITIDAS");
             } else {
-                // CUANDO PASA ALGUNAS DE ESTAS COSAS DEBO AGREGAR AL CLIENTE A LA LISTA DE CLIENTES RESTRINGIDOS
-                // MANDAR NOTIFICACION
-                 if(estaDentroDelRadioAdmitido(posicion,configuracion)){
-                     String mensaje = "EL VEHICULO: " + vehiculo.getPatente() + " DEBE REGRESAR INMEDIATAMENTE " + "TELEFONO : " + numEmpleado;
-                     String tipo = "FUERA DE RADIO ADMITIDO";
+                 if(estaDentroDelRadio(posicion,configuracion)){
+                     String mensaje = "EL VEHICULO CON PATENTE: " + vehiculo.getPatente() + " DEBE REGRESAR " + "TELEFONO : " + numEmpleado;
+                     String tipo = "ROMPIO LA CONDICION: FUERA DE RADIO ADMITIDO";
                      Notificacion notificacion = new Notificacion(mensaje, tipo);
                      notificacionService.enviarNotificacion(notificacion);
                  } else{
-                     String mensaje = "EL VEHICULO: " + vehiculo.getPatente() + " DEBE REGRESAR INMEDIATAMENTE " + "TELEFONO : " + numEmpleado;
-                     String tipo = "ZONA RESTRINGIDA";
+                     String mensaje = "EL VEHICULO CON PATENTE: " + vehiculo.getPatente() + " DEBE REGRESAR " + "TELEFONO : " + numEmpleado;
+                     String tipo = "ROMPIO LA CONDICION: ZONA RESTRINGIDA";
                      Notificacion notificacion = new Notificacion(mensaje, tipo);
                      notificacionService.enviarNotificacion(notificacion);
                  }
 
                 System.out.println("NO ESTA DENTRO DE LO PERMITIDO");
+                 // Marcar al interesado como restringido y en la tabla pruebas se pone en 1 la casilla incidente
                 interesado.setRestringido(true);
                 prueba.setInicidente(true);
             }
@@ -89,7 +85,7 @@ public class PosicionService {
         }
     }
 
-    private boolean estaDentroDelRadioAdmitido(Posicion posicion, Configuracion configuracion) {
+    private boolean estaDentroDelRadio(Posicion posicion, Configuracion configuracion) {
         double distancia = posicionRepository.calcularDistancia(
                 posicion.getLatitud(), posicion.getLongitud(),
                 configuracion.getCoordenadasAgencia().getLat(),
@@ -108,21 +104,17 @@ public class PosicionService {
         return false;
     }
 
-
-
+    //USADO PARA EL REPORTE DE KM
     public String obtenerCantidadKilometros(Integer idVehiculo, Timestamp fechaInicio, Timestamp fechaFin){
-        Double cantidadKilometros = posicionRepository.cantidadKilometros(idVehiculo, fechaInicio, fechaFin);
 
+        Double cantiKm = posicionRepository.cantKilometros(idVehiculo, fechaInicio, fechaFin);
         Vehiculo vehiculo = vehiculoRepository.findByID(idVehiculo);
         String patente = vehiculo.getPatente();
 
-        StringBuilder reporte = new StringBuilder();
-        reporte.append("REPORTE DE KILOMETROS PARA EL VEHICULO: " + patente  ).append("\n");
-        reporte.append("Fecha Actual :").append(Timestamp.from(Instant.now())).append("\n\n");
-        reporte.append("LA CANTIDAD DE KILOMETROS RECORRIDO EN PRUEBAS ES : " + cantidadKilometros);
-
-        return reporte.toString();
+        return "///////////////////////////////////////////////////////////////////////////////////////\n" +
+                "REPORTE DE CANTIDAD DE KILOMETROS DE PRUEBA RECORRIDOS PARA EL VEHICULO: " + patente + "\n" +
+                "///////////////////////////////////////////////////////////////////////////////////////\n\n" +
+                "--------------------------------------------------\n" +
+                "CANTIDAD DE KM RECORRIDOS: " + cantiKm + "km\n" + "--------------------------------------------------";
     }
-
-
 }

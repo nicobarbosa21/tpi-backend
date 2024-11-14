@@ -24,9 +24,9 @@ public class EmpleadoRepository {
         }
     }
 
-    public List<Prueba> obtenerPruebasIncidentePorLegajo(Integer legajo) {
+    public List<Prueba> getPruebasIncidentePorLegajo(Integer legajo) {
         try {
-            return em.createQuery("SELECT p FROM Prueba p WHERE p.inicidente = TRUE AND p.empleado.legajo = :legajo", Prueba.class)
+            return em.createQuery("SELECT pru FROM Prueba pru WHERE pru.inicidente = TRUE AND pru.empleado.legajo = :legajo", Prueba.class)
                     .setParameter("legajo", legajo)
                     .getResultList();
         } catch (Exception e) {

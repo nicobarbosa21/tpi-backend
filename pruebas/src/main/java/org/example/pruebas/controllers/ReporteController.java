@@ -29,7 +29,7 @@ public class ReporteController {
             return ResponseEntity.ok(reportes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("ERROR AL OBTENER EL REPORTE");
+                    .body(e.getMessage());
         }
     }
 
@@ -41,37 +41,32 @@ public class ReporteController {
         return ResponseEntity.ok(reporte);
     }
 
-
     // PUNTO 6 C
     @PostMapping("/reporteKm")
     public ResponseEntity<String> obtenerKilometrosXVehiculo(@RequestBody VehiculoDTO vehiculoDTO) {
 
         Integer vehiculoId = vehiculoDTO.getId();
-        System.out.println(vehiculoId);
         ReporteDTO reporteDTO = vehiculoDTO.getReporteDTO();
         Timestamp fechaInicio = reporteDTO.getFechaInicio();
-        System.out.println(fechaInicio);
         Timestamp fechaFin = reporteDTO.getFechaFin();
-        System.out.println(fechaFin);
 
-        String reporte = posicionService.obtenerCantidadKilometros(vehiculoId, fechaInicio, fechaFin);
-        if (reporte.isEmpty()) {
-            return ResponseEntity.ok("NO HAY PRUEBAS PARA DICHO VEHÍCULO");
+        String reporteKm = posicionService.obtenerCantidadKilometros(vehiculoId, fechaInicio, fechaFin);
+        if (reporteKm.isEmpty()) {
+                    return ResponseEntity.ok("NO HAY PRUEBAS ASOCIADAS AL VEHICULO");
         }
-        return ResponseEntity.ok(reporte);
+        return ResponseEntity.ok(reporteKm);
     }
-
 
     //6d - Reportes de pruebas x Vehiculos
     @GetMapping("/reporteVehiculo")
     public ResponseEntity<String> obtenerReporteIncidentesPorVehiculo(@RequestBody VehiculoDTO vehiculoDTO) {
-        String reporte = pruebaService.obtenerPruebasXVehiculo(vehiculoDTO.getPatente());
+        String reporteVehiculo = pruebaService.obtenerPruebasPorVehiculo(vehiculoDTO.getPatente());
 
-        if (reporte.isEmpty()) {
-            return ResponseEntity.ok("NO HAY PRUEBAS PARA DICHO VEHICULO");
+        if (reporteVehiculo.isEmpty()) {
+            return ResponseEntity.ok("NO HAY PRUEBAS ASOCIADAS AL VEHICULO");
         }
 
-        return ResponseEntity.ok(reporte);
+        return ResponseEntity.ok(reporteVehiculo);
     }
 
 

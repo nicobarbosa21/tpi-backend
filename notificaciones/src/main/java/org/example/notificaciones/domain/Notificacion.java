@@ -10,31 +10,31 @@ public class Notificacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private long id;
-    private String msj;
-    private String type;
+    private String mensaje;
+    private String tipo;
 
-    public Notificacion(String msj, String type) {
-        this.msj = msj;
-        this.type = type;
+    public Notificacion(String mensaje, String tipo) {
+        this.mensaje = mensaje;
+        this.tipo = tipo;
     }
 
     public Notificacion() {
     }
 
-    public String getMsj() {
-        return msj;
+    public String getMensaje() {
+        return mensaje;
     }
 
-    public void setMsj(String mensaje) {
-        this.msj = mensaje;
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
     }
 
-    public String getType() {
-        return type;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setType(String tipo) {
-        this.type = tipo;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public Long getId() {
@@ -43,10 +43,10 @@ public class Notificacion {
 
 
     @Override
-    public String toString() { // este metodo es para que se muestre de forma mas legible en consola
+    public String toString() {
         return "Notificacion{" +
-                "mensaje='" + msj + '\'' +
-                ", tipo='" + type + '\'' +
+                "mensaje='" + mensaje + '\'' +
+                ", tipo='" + tipo + '\'' +
                 '}';
     }
 }

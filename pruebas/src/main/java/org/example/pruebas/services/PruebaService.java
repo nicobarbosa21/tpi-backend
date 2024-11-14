@@ -43,7 +43,7 @@ public class PruebaService {
             Empleado empleado = empleadoRepository.findByLegajo(legajoEmpleado);
 
             // Verificar que el vehiculo no este siendo probado
-            Boolean existe = pruebaRepository.existePruebaActivaParaVehiculo(vehiculo.getId());
+            Boolean existe = pruebaRepository.esPruebaActivaParaVehiculo(vehiculo.getId());
             if (existe) {
                 System.out.println("EL VEHICULO ESTA SIENDO PROBADO");
                 return null;
@@ -58,7 +58,7 @@ public class PruebaService {
 
             // VERIFICAR QUE EL VEHICULO ESTE PATENTADO
             if (vehiculo.getPatente() == null) {
-                System.out.println("EL VEHICULO NO SE ENCUENTRA PATENTADO");
+                System.out.println("EL VEHICULO NO ESTÁ PATENTADO");
                 return null;
             }
 
@@ -69,16 +69,15 @@ public class PruebaService {
             }
 
             if (comentario == null) {
-                comentario = "NO HAY COMENTARIOS";
+                comentario = "SIN COMENTARIOS";
             }
 
             // Código para guardar la prueba
-            System.out.println("Guardando la prueba...");
+            System.out.println("Generando y guardando la prueba...");
             Timestamp fechaInicio = Timestamp.from(Instant.now());
-            // SE INICIA COMO NULA
-            Timestamp fechaHoraFin = null;
 
-            Prueba prueba = new Prueba(vehiculo, interesado, empleado, fechaInicio, fechaHoraFin, comentario);
+            // UNA PRUEBA RECIEN CREADA NO SE HA CERRADO, POR LO QUE SE INICIALIZA COMO NULA
+            Prueba prueba = new Prueba(vehiculo, interesado, empleado, fechaInicio, null, comentario);
             pruebaRepository.save(prueba);
 
             return prueba;
@@ -95,64 +94,57 @@ public class PruebaService {
     @Transactional
     public boolean finalizarPrueba(Integer id, String comentario){
         //Verificar que exista la prueba
-        Boolean existe = pruebaRepository.existePruebaActiva(id);
+        Boolean existe = pruebaRepository.esPruebaActiva(id);
         if (existe) {
-            pruebaRepository.finalizarPruebaEnCurso(id, comentario);
+            pruebaRepository.terminarPruebaActiva(id, comentario);
         }
         else {
-            System.out.println("NO EXISTE LA PRUEBA ACTIVA");
+            System.out.println("No existe esa prueba activa");
         }
         return existe;
     }
 
-
     public String obtenerPruebasConIncidentes() {
-        List<Prueba> pruebas = pruebaRepository.obtenerPruebasIncidente();
+        List<Prueba> pruebas = pruebaRepository.getPruebasConIncidente();
         StringBuilder reporte = new StringBuilder();
 
-        // Título y fecha actual
-        reporte.append("===== Reporte de Incidentes =====\n");
-        reporte.append("Fecha Actual: ").append(Timestamp.from(Instant.now())).append("\n\n");
+        reporte.append("//////////////////////////////////////\n");
+        reporte.append("Visualizador de Reporte de Incidentes\n");
+        reporte.append("//////////////////////////////////////\n");
+        //reporte.append("Fecha Actual: ").append(Timestamp.from(Instant.now())).append("\n\n");
 
-        // Lista de pruebas
-        reporte.append("Pruebas:\n");
         for (Prueba prueba : pruebas) {
-            reporte.append("------------------------------\n")
-                    .append("Vehículo: ").append(prueba.getVehiculo().getPatente()).append("\n")
+            reporte.append("Vehículo: ").append(prueba.getVehiculo().getPatente()).append("\n")
                     .append("Interesado: ").append(prueba.getInteresado().getNombre()).append(" ") .append(prueba.getInteresado().getApellido()).append("\n")
-                    .append("Empleado: ").append(prueba.getEmpleado().getNombre()).append("").append(prueba.getEmpleado().getApellido()).append("\n")
-                    .append("Fecha de Inicio: ").append(prueba.getFecha_hora_inicio()).append("\n")
-                    .append("Fecha de Fin: ").append(prueba.getFecha_hora_fin()).append("\n");
+                    .append("Empleado: ").append(prueba.getEmpleado().getNombre()).append(prueba.getEmpleado().getApellido()).append("\n")
+                    .append("Fecha Inicio: ").append(prueba.getFecha_hora_inicio()).append("\n")
+                    .append("Fecha Fin: ").append(prueba.getFecha_hora_fin()).append("\n")
+                    .append("-------------------------------------------");
         }
-
         return reporte.toString();
     }
 
-
     // REPORTE II - Obtener las pruebas con incidentes por empleado
     public String obtenerPruebasConIncidentesPorLegajo(Integer legajo) {
-        List<Prueba> pruebas = empleadoRepository.obtenerPruebasIncidentePorLegajo(legajo);
+        List<Prueba> pruebas = empleadoRepository.getPruebasIncidentePorLegajo(legajo);
         StringBuilder reporte = new StringBuilder();
 
         // Título y fecha actual
-        reporte.append("===== Reporte de Incidentes =====\n");
-        reporte.append("Empleado con Legajo: ").append(legajo).append("\n");
-        reporte.append("Fecha Actual: ").append(Timestamp.from(Instant.now())).append("\n\n");
+        reporte.append("//////////////////////////////////////\n");
+        reporte.append("Visualizador de Reporte de Incidentes\n");
+        reporte.append("Para el empleado con Numero de Legajo: ").append(legajo).append("\n");
+        reporte.append("//////////////////////////////////////\n");
 
-        // Información sobre las pruebas correspondientes al empleado
-        reporte.append("Pruebas Correspondientes al Empleado (Legajo: ").append(legajo).append("):\n");
-
-        // Lista de pruebas
         if (pruebas.isEmpty()) {
-            reporte.append("No se encontraron incidentes para este empleado.\n");
+            reporte.append("No hay incidentes asignados al empleado\n");
         } else {
             for (Prueba prueba : pruebas) {
-                reporte.append("------------------------------\n")
-                        .append("Patente Vehículo: ").append(prueba.getVehiculo().getPatente()).append("\n")
-                        .append("Interesado: ").append(prueba.getInteresado().getNombre()).append(" ").append(prueba.getInteresado().getApellido()).append("\n")
-                        .append("Empleado: ").append(prueba.getEmpleado().getNombre()).append(" ").append(prueba.getEmpleado().getApellido()).append("\n")
-                        .append("Fecha de Inicio: ").append(prueba.getFecha_hora_inicio()).append("\n")
-                        .append("Fecha de Fin: ").append(prueba.getFecha_hora_fin()).append("\n\n");
+                reporte.append("Vehículo: ").append(prueba.getVehiculo().getPatente()).append("\n")
+                        .append("Interesado: ").append(prueba.getInteresado().getNombre()).append(" ") .append(prueba.getInteresado().getApellido()).append("\n")
+                        .append("Empleado: ").append(prueba.getEmpleado().getNombre()).append(prueba.getEmpleado().getApellido()).append("\n")
+                        .append("Fecha Inicio: ").append(prueba.getFecha_hora_inicio()).append("\n")
+                        .append("Fecha Fin: ").append(prueba.getFecha_hora_fin()).append("\n")
+                        .append("-------------------------------------------\n");
             }
         }
 
@@ -160,26 +152,20 @@ public class PruebaService {
     }
 
     // REPORTE IV - Detalle de las pruebas para un vehiculo
-    public String obtenerPruebasXVehiculo(String patente) {
-        List<Prueba> pruebas = vehiculoRepository.obtenerPruebasFinalizadasPorVehiculo(patente);
+    public String obtenerPruebasPorVehiculo(String patente) {
+        List<Prueba> pruebas = vehiculoRepository.getPruebasFinalizadasPorVehiculo(patente);
         StringBuilder reporte = new StringBuilder();
-
-        // Título y fecha actual
-        reporte.append("REPORTE DE PRUEBAS PARA EL VEHICULO: "+ patente).append("\n");
-        reporte.append("Fecha Actual :").append(Timestamp.from(Instant.now())).append("\n\n");
-
-        // Lista de pruebas
-        reporte.append("Pruebas:\n");
+        reporte.append("////////////////////////////////////////////////////////////////////////\n");
+        reporte.append("Visualizador de Reporte de pruebas para el vehículo: ").append(patente).append("\n");
+        reporte.append("////////////////////////////////////////////////////////////////////////\n");
         for (Prueba prueba : pruebas) {
             reporte.append("VEHÍCULO: ").append(prueba.getVehiculo().getPatente()).append("\n")
                     .append("INTERESADO: ").append(prueba.getInteresado().getNombre()).append("\n")
                     .append("EMPLEADO: ").append(prueba.getEmpleado().getNombre()).append("\n")
                     .append("FECHA DE INICIO: ").append(prueba.getFecha_hora_inicio()).append("\n")
-                    .append("FECHA DE FIN: ").append(prueba.getFecha_hora_fin()).append("\n\n");
+                    .append("FECHA DE FIN: ").append(prueba.getFecha_hora_fin()).append("\n\n")
+                    .append("-------------------------------------------\n");
         }
-
         return reporte.toString();
 }
-
-
 }
